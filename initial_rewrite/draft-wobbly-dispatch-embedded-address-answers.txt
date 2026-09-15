@@ -263,7 +263,7 @@ Table of Contents
         address="192.0.2.1" />
 
    <a href="https://www.example.net/bunnies.html"
-      address="192.0.2.1, 192.0.2.42">Learn more</a>
+      address="192.0.2.1, 192.0.2.42, 2001:0DB8::42">Bunnies! Yay, bunnies!</a>
 
    This mechanism is simple to understand and easy to prototype.  It has
    the advantage that the page author or generation system controls the
@@ -456,9 +456,18 @@ Embedded-Answers: images.example.com=192.0.2.1; www.example.net=192.0.2.1,192.0.
 
 Acknowledgments
 
-   The authors would like to acknowledge the input and feedback of
-   colleagues who have discussed this topic with us, including
-   participants in the broader DNS, HTTP, and web-platform communities.
+   The authors would like to thank the following individuals for their
+   feedback and suggestions: Mike Bishop, Geoff Huston, Erik Nygren,
+   Adam Roach, David Schinazi, Ian Swett.  This work was informed by
+   discussion on the "Resolverless DNS" mailing list and other places,
+   and we would like to acknowledge the contributions of many
+   individuals who have participated in these discussions over the
+   years.
+
+   Unfortunately, at least one of the authors has a terrible memory, and
+   has lost track of all those who have contributed to this topic over
+   the years, and will be more than happy to acknowledge their input if
+   reminded of this :-)
 
 Authors' Addresses
 
