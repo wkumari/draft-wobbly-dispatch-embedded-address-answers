@@ -200,7 +200,7 @@ attributes on elements that indicate the network target for a given resource:
      address="192.0.2.1" />
 
 <a href="https://www.example.net/bunnies.html"
-   address="192.0.2.1, 192.0.2.42">Learn more</a>
+   address="192.0.2.1, 192.0.2.42, 2001:0DB8::42">Bunnies! Yay, bunnies!</a>
 ~~~
 
 This mechanism is simple to understand and easy to prototype. It has the
