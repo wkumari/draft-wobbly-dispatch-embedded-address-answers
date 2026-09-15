@@ -91,9 +91,10 @@ reduce the delay, but they do not eliminate it and they do not necessarily
 remove the privacy implications of host resolution.
 
 If the origin or a trusted intermediary were able to provide the relevant
-address information in the response itself, the client could potentially avoid a
-separate lookup or begin connection setup earlier. This could improve the user
-experience while reducing exposure of the requested hostnames to third parties.
+address information in the response itself, the client could potentially avoid
+a separate lookup or begin connection setup earlier. This could improve the
+user experience while reducing exposure of the requested hostnames to third
+parties.
 
 # Conventions and Definitions
 
@@ -166,11 +167,11 @@ but it still preserves a fallback path to DNS-driven verification.
 
 ## Same-origin or same-operator assumptions
 
-A third model is to treat addresses associated with a related hostname as safe to
-use within a constrained trust boundary, such as a site or an organization. For
-example, a page at www.example.com might be allowed to carry an embedded answer
-for images.example.com if the hostnames are controlled by the same party and the
-client applies explicit restrictions.
+A third model is to treat addresses associated with a related hostname as safe
+to use within a constrained trust boundary, such as a site or an organization.
+For example, a page at www.example.com might be allowed to carry an embedded
+answer for images.example.com if the hostnames are controlled by the same party
+and the client applies explicit restrictions.
 
 This model is attractive because it aligns with common web deployment patterns,
 but it is also more dangerous. It depends on an operational assumption that is
@@ -216,17 +217,17 @@ specified and tightly constrained.
 
 ## HTTP headers
 
-A more structured design is to carry address information in an HTTP header. This
-would allow the server, edge cache, or CDN to provide a set of answer hints that
-are relevant to the response being served:
+A more structured design is to carry address information in an HTTP header.
+This would allow the server, edge cache, or CDN to provide a set of answer
+hints that are relevant to the response being served:
 
 ~~~
 Embedded-Answers: images.example.com=192.0.2.1; www.example.net=192.0.2.1,192.0.2.2
 ~~~
 
 This mechanism is architecturally cleaner than embedding data directly in HTML.
-The server is already in control of the response, and in many deployments it has
-valuable context about origin topology, load, and client affinity. In some
+The server is already in control of the response, and in many deployments it
+has valuable context about origin topology, load, and client affinity. In some
 cases, the same server or CDN is responsible for both the referencing page and
 the target resource, which makes it easier to select an appropriate endpoint.
 
@@ -265,8 +266,8 @@ correct answer depends on factors such as:
 For example, a CDN serving multiple customers may have different optimal
 endpoints for the same hostname depending on the client network, the edge
 location, and the active service topology. A server that resolves a name in one
-geographic region may produce an answer that is excellent for Toronto clients but
-poor for clients in Sydney.
+geographic region may produce an answer that is excellent for Toronto clients
+but poor for clients in Sydney.
 
 This creates several operational tensions:
 
@@ -288,8 +289,8 @@ CDN and edge infrastructure.
 
 # Discussion Items
 
-This document is intentionally exploratory, and the authors invite feedback on a
-number of design questions. The purpose of this section is to highlight the
+This document is intentionally exploratory, and the authors invite feedback on
+a number of design questions. The purpose of this section is to highlight the
 areas where the concept is still under discussion and where further experience
 would be valuable.
 
@@ -326,16 +327,16 @@ limited to cases where the client can clearly describe the trust assumptions.
 ## What is the appropriate scope of deployment?
 
 A significant open question is whether embedded answers should be deployed as a
-browser-facing optimization, a server-side origin facility, or a transport-level
-feature. Different deployment models may impose different security, operational,
-and architectural constraints.
+browser-facing optimization, a server-side origin facility, or a
+transport-level feature. Different deployment models may impose different
+security, operational, and architectural constraints.
 
 # Security and Privacy Considerations
 
 This proposal creates a tension between optimization and trust. The same
-mechanism that reduces DNS lookup latency can also allow a party that controls a
-response to steer the client toward a chosen address without the client having
-independently validated that address.
+mechanism that reduces DNS lookup latency can also allow a party that controls
+a response to steer the client toward a chosen address without the client
+having independently validated that address.
 
 The security considerations include:
 
@@ -367,6 +368,13 @@ This document has no IANA actions.
 # Acknowledgments
 {:numbered="false"}
 
-The authors would like to acknowledge the input and feedback of colleagues who
-have discussed this topic with us, including participants in the broader DNS,
-HTTP, and web-platform communities.
+The authors would like to thank the following individuals for their feedback
+and suggestions: Mike Bishop, Geoff Huston, Erik Nygren, Adam Roach, David
+Schinazi, Ian Swett. This work was informed by discussion on the "Resolverless
+DNS" mailing list and other places, and we would like to acknowledge the
+contributions of many individuals who have participated in these discussions
+over the years.
+
+Unfortunately, at least one of the authors has a terrible memory, and has lost
+track of all those who have contributed to this topic over the years, and will
+be more than happy to acknowledge their input if reminded of this :-)
