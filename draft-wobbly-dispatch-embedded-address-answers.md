@@ -25,7 +25,7 @@ venue:
   latest: https://example.com/LATEST
 
 author:
- -
+  -
     fullname: Warren Kumari
     organization: Google, Inc.
     email: warren@kumari.net
