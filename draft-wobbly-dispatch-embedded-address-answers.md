@@ -25,7 +25,7 @@ venue:
   latest: https://example.com/LATEST
 
 author:
- -
+  -
     fullname: Warren Kumari
     organization: Google, Inc.
     email: warren@kumari.net
@@ -285,6 +285,50 @@ This creates several operational tensions:
 The design implications are therefore not purely protocol-level. They depend on
 operator practices, client policies, and the operational realities of modern
 CDN and edge infrastructure.
+
+# Discussion Items
+
+This document is intentionally exploratory, and the authors invite feedback on a
+number of design questions. The purpose of this section is to highlight the
+areas where the concept is still under discussion and where further experience
+would be valuable.
+
+## What is the appropriate trust boundary?
+
+A key question is whether a client should treat embedded answers as
+cryptographically authenticated, as a best-effort optimization hint, or as an
+origin-local mechanism with explicit restrictions. The appropriate answer may
+depend on the embedding mechanism, the application context, and the client's
+security policy.
+
+## What restrictions are necessary for cross-origin use?
+
+A mechanism that carries address hints across origins introduces a question of
+scope: should such hints be usable only for a single origin, only for related
+hostnames, or only for restricted classes of requests? This question is closely
+related to the broader web-security discussion of site, origin, and delegated
+authority.
+
+## How should freshness be managed?
+
+Embedded addresses may become stale, either because the underlying endpoint set
+changes or because the client receives an answer that was generated under older
+conditions. The document does not yet specify how a client should bound the
+lifetime of such an answer or how a server should determine when to refresh it.
+
+## What is the right balance between privacy and performance?
+
+The concept is intended to reduce DNS exposure and improve latency, but it also
+creates a new set of data flows. It is not yet clear whether the privacy
+benefit justifies the additional complexity or whether the answer should remain
+limited to cases where the client can clearly describe the trust assumptions.
+
+## What is the appropriate scope of deployment?
+
+A significant open question is whether embedded answers should be deployed as a
+browser-facing optimization, a server-side origin facility, or a transport-level
+feature. Different deployment models may impose different security, operational,
+and architectural constraints.
 
 # Security and Privacy Considerations
 
