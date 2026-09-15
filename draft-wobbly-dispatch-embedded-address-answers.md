@@ -43,223 +43,286 @@ informative:
 
 --- abstract
 
-Almost all web interactions begin with resolving a name to an IP address using
-the DNS. While the DNS is performant, especially when the locals resolver's
-cache has the answer, there is still a measurable delay and performance impact.
-In addition to the performance impact, there is also a privacy implication in
-sharing the name being looked up with a third party to the transaction (the
-DNS).
+Many web interactions require a client to resolve a hostname before it can
+establish a connection to a service. While DNS is generally efficient, each
+lookup incurs some delay and exposes information about the user's browsing
+activity to the recursive resolver and upstream infrastructure. This document
+explores techniques by which a client may receive DNS-derived address data as
+part of an application-layer response, so that it can initiate a connection
+without performing a separate DNS lookup for the same target.
 
-The mechanisms described in this document provide means to provide resolution
-without (directly) asking the DNS.
-
+The mechanisms discussed here are intended to reduce lookup latency and
+potentially improve privacy, but they also raise significant questions about
+trust, freshness, and security. The document does not prescribe a single
+normative mechanism; instead, it describes several design options and the
+trade-offs associated with each.
 
 --- middle
 
 # Introduction
 
-This document provides mechanisms to embed resolved IP addresses in web
-interactions, thereby improving performance, as well as potentially improving
-privacy. It contains a number of mechanisms for embedding or transporting these
-answers, as well as multiple mechanisms for using these embedded answers.
+The vast majority of web interactions begin with a hostname resolution step. A
+browser that needs to fetch an image from images.example.com or follow a link
+to www.example.net typically performs one or more DNS lookups before opening a
+connection. Even when a resolver cache produces a fast answer, the lookup can
+still impose measurable latency and can reveal information about the user's
+activities to the resolver and any intermediaries on the path.
 
-{Ed note: The authors of this document are more "DNS people" than "web people".
-While we have discussed these with "web people" we are certainly not experts
-and kindly ask readers make accommodations for our clunky terminology, etc.  }
+This document discusses a class of mechanisms in which the client receives
+address information as part of an existing application-layer exchange, rather
+than by performing a separate DNS lookup. Such information could be embedded in
+HTML, carried in HTTP metadata, or delivered through a protocol mechanism such
+as HTTP/3 or QUIC. The goal is to allow the client to establish a connection
+more quickly, and in some cases to avoid exposing the lookup itself to the DNS
+infrastructure.
 
-Take, for example, a user loading www.example.com/kittens.html. This webpage
-contains a number of links to resources, including an image of a kitten at
-images.example.com, and a link to another page, www.example.net/bunnies.html.
+This document is intentionally exploratory. It presents a number of possible
+ways to embed address information, along with several trust models that a
+client might apply when deciding whether to use such information. The design
+space is broad, and the trade-offs are substantial.
 
-In order to load the image, the user's browser needs to resolve
-images.example.com, and if the user wants to follow the link to learn about
-bunnies, they will also need the address for www.example.net. Both of these
-require performing DNS lookups, which both take time, and also leak the fact
-that the user is getting an image, and also (probably) is interested in
-bunnies. While this example is not privacy sensitive, because everyone likes
-bunnies and kittens, there are obviously situations where the user might not
-want what they are resolving exposed to their DNS servers. Also, while there
-are methods to decrease the latency from doing DNS resolutions, such as
-prefetching and rendering while fetching additional resources, these are not
-completely effective.
+Consider a page at https://www.example.com/kittens.html that includes an image
+served from https://images.example.com/kittens.png and a link to
+https://www.example.net/bunnies.html. To fetch the image, the browser must
+resolve images.example.com. To follow the link, it must resolve
+www.example.net. Both operations take time and reveal that the user is
+accessing those resources. Prefetching and speculative connection setup can
+reduce the delay, but they do not eliminate it and they do not necessarily
+remove the privacy implications of host resolution.
 
-By embedding the resolution targets (generally IP address records) in the
-response (see below for possible embeddings), we can both improve user privacy
-and experience.
-
+If the origin or a trusted intermediary were able to provide the relevant
+address information in the response itself, the client could potentially avoid a
+separate lookup or begin connection setup earlier. This could improve the user
+experience while reducing exposure of the requested hostnames to third parties.
 
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
-# Yeah, sez you!
+This document uses the term "embedded answer" to refer to an application-layer
+value that conveys one or more network addresses associated with a hostname.
+The term is intentionally generic: it does not assume a specific format or a
+single authority model.
 
-The obvious question is why a client would be willing to trust an embedded
-response. This section discusses a some options.
+The term "optimization hint" refers to a value that may improve connection
+setup latency, but is not necessarily authoritative. The term "authenticated
+answer" refers to a value that the client has reason to treat as equivalent to
+an answer obtained through DNS validation or other cryptographic means.
 
-{Ed note: This section is intended to drive (hopefully robust but congenial!)
-discussion. }
+# Goals and Non-Goals
 
-## DNSSEC
+The goals of the techniques discussed here are to:
 
-The most obvious (and probably more secure) reason that an embedded answer
-could be trusted is if the domain is DNSSEC signed, and the full set of
-resources records is included in the embedding. This allows the browser to
-cryptographically validate that the answer is one intended by the zone
-operator.
+- reduce the latency incurred by hostname resolution;
+- allow a client to begin connection setup earlier; and
+- reduce the amount of hostname information exposed to the DNS path.
 
-This obviously has some limitations - the primary one being that the domain
-needs to be DNSSEC signed!
+These techniques are not limited to a single transport or a single application
+protocol. However, the examples in this document focus on web content and
+connection establishment.
 
-## Connection racing
+The non-goals include:
 
-A second option is not to actually trust the embedded answer, and instead use
-it simply as an optimization hint. HTTP Connection racing, as described in
-[TODO] allows a browser to begin making a connection to a server, but not
-actually complete that connection until it has received additional
-confirmation.
+- replacing DNS as the primary name resolution system;
+- guaranteeing that embedded answers are universally trusted; or
+- defining a single protocol mechanism without further discussion and
+  deployment experience.
 
-In this proposal, the browser could begin making a "raced" connection to the
-embedded address, possibly including the TLS handshake, etc but not actually
-send any data until it has also validated the address through DNS. In this
-design, the browser would strictly treat the embedded address as not trusted
-until it has received an identical answer through the DNS - but it can at
-improve the users' experience by having begun a connection to that server.
+# Trust Models
 
-{Ed note: This might be a bad idea, more discussion is needed. DNS-based load
-balancing (sometimes called GSLB) used to be very common, and so the addresses
-that clients received were fairly dynamic, but increasingly CDNs are moving to
-anycast, and non-CDN services generally only have a small number of IPs.  }
+A central question is why a client would trust an embedded answer. This section
+outlines several possible trust models, each with different security and
+operational properties.
 
-{Ed note: As a web page already has multiple ways to cause a connection to be
-made to arbitrary places (e.g embedding resources, Javascript, etc), this
-doesn't seem to really create additional capabilities for malicious pages, but
-it's entirely possible that we've missed something obvious!}
+## DNSSEC-validated answers
 
+The strongest model is one in which the embedded answer is cryptographically
+bound to the originating DNS zone. For example, a response could include the
+relevant RRset, along with the necessary DNSSEC validation material, and the
+client could verify the answer using the DNSSEC chain. If the validation
+succeeds, the answer is equivalent to an authenticated DNS answer.
 
-## "Same origin / same domain"
+This model has the advantage that it aligns closely with the existing security
+properties of DNS. It does, however, require that the relevant zone be DNSSEC
+signed and that the client and the embedding entity support the necessary
+validation steps.
 
-{Ed note: Hey, we did note that our web-terminology is shaky.} {Ed note: This
-might be the worst idea ever. Seriously, it might be, but we wanted some
-feedback if there is a way to make it less bad...}
+## Optimization-only hints
 
-It is very likely that www.example.com and images.example.com are operated by
-the same entity, and that it might be safe to fetch content from the address
-for images.example.com embedded in www.example.com, subject to certain
-restrictions -- for example, the answer would need to be in the same "domain",
-the answer could only be used to fetch (not post) content, etc.
+A second model is to treat the embedded answer as an optimization hint rather
+than as authoritative data. In such a model, the client may use the address to
+begin connection setup or perform connection racing while waiting for DNS to
+confirm or refute the advertised address.
 
-It's entirely possible that this is a really stupid idea, but we want some
-feedback - for example, www.example.com embedding an answer for
-images.example.com "feels" okay, but the same thing is not true for
-example1.medium.com and example2.medium.com. Something something PSL something
-same-origin something?
+In this design, the client does not necessarily consider the embedded answer to
+be trusted until it has been validated by a conventional DNS resolution or by
+another trusted mechanism. The benefit is that the client can exploit the
+embedded data to reduce connection setup latency without accepting the risk of
+blindly trusting it.
 
+This model may be useful when the embedded answer is generated by a local
+infrastructure component that is in a position to estimate the best endpoint,
+but it still preserves a fallback path to DNS-driven verification.
 
-# Embedding options
+## Same-origin or same-operator assumptions
 
-This document primarily discusses the concepts around embedded answers, and
-these are some potential mechanisms to embed these answers in connections. As
-noted above, the primary authors are "DNS people".
+A third model is to treat addresses associated with a related hostname as safe to
+use within a constrained trust boundary, such as a site or an organization. For
+example, a page at www.example.com might be allowed to carry an embedded answer
+for images.example.com if the hostnames are controlled by the same party and the
+client applies explicit restrictions.
 
-## HTML
+This model is attractive because it aligns with common web deployment patterns,
+but it is also more dangerous. It depends on an operational assumption that is
+not necessarily true even when the hostnames share a registrable domain. The
+client must define restrictions such as whether the value may be used only for
+read operations, only for a limited set of protocols, or only for a specific
+origin relation. It must also consider the possibility that a page can cause a
+client to connect to destinations that are not obviously related to the origin.
 
-An obvious, naive mechanism would be to simply embed the resolved IP address in
-the HTML itself. This is likely the least optimal was of accomplishing the
-goals expressed in this document, and is primarily shown here as an
-illustrative example (we don't really think it will survive adoption!).
+The precise boundaries for "same-origin" and "same-operator" are not obvious,
+and this remains a topic for further discussion.
 
-There are obviously many potential issues with this approach, including stale
-answers, but it could potentially be useful if the HTML were dynamically
-generated - but again, this is primarily documented to illustrate the concept.
+# Embedding Mechanisms
 
-The page at www.example.com/kittens could contain tags such as:
+This document discusses several possible ways to deliver embedded answers. The
+purpose of this section is to illustrate the design space, not to mandate a
+single mechanism.
+
+## HTML embedding
+
+A straightforward design is to embed the address information directly in HTML.
+For example, the page at https://www.example.com/kittens could include
+attributes on elements that indicate the network target for a given resource:
+
+~~~ html
+<img src="https://images.example.com/kittens.png"
+     address="192.0.2.1" />
+
+<a href="https://www.example.net/bunnies.html"
+   address="192.0.2.1, 192.0.2.42">Learn more</a>
 ~~~
-<img src="https://images.example.com/kittens.png" address="192.0.2.1"></img>
-<a href="https://www.example.com/bunnies.html" address="192.0.2.1,192.0.2.42,[TODO]">
+
+This mechanism is simple to understand and easy to prototype. It has the
+advantage that the page author or generation system controls the information
+that is embedded. It also has obvious drawbacks: the information may become
+stale, the browser must interpret a potentially large number of address hints,
+and the page author could embed values that are not aligned with the current
+DNS or the client's network conditions.
+
+The approach is useful for experiments, but it is not likely to be the final
+preferred mechanism for general deployment unless the format is carefully
+specified and tightly constrained.
+
+## HTTP headers
+
+A more structured design is to carry address information in an HTTP header. This
+would allow the server, edge cache, or CDN to provide a set of answer hints that
+are relevant to the response being served:
+
+~~~
+Embedded-Answers: images.example.com=192.0.2.1; www.example.net=192.0.2.1,192.0.2.2
 ~~~
 
-An advantage of this approach (other than it being a good illustration of the
-concept!) is that it is trivial for a website or [TODO] to implement. If this
-is actually deployed, the authors think that it would only be for testing /
-experimentation. It does, however, put the webpage author in charge.
+This mechanism is architecturally cleaner than embedding data directly in HTML.
+The server is already in control of the response, and in many deployments it has
+valuable context about origin topology, load, and client affinity. In some
+cases, the same server or CDN is responsible for both the referencing page and
+the target resource, which makes it easier to select an appropriate endpoint.
 
-## HTTP Header
+The drawback is that the server becomes responsible for resolving and selecting
+addresses. This introduces incentives and operational trade-offs. For example,
+a CDN that fronts multiple origins might prefer a local address or a preferred
+peer network in order to retain traffic, potentially at the expense of the
+client's optimal path. This is not necessarily an error in the protocol design,
+but it is a substantial deployment consideration.
 
-In this embedding mechanism, the embedded answers would be carries in an HTTP
-Header. For example:
+## QUIC and HTTP/3 transport mechanisms
 
-~~~
-Embedded-Answers="images.example.com: [192.0.2.1], www.example.net: [192.0.2.1, 192.0.2.2, ]
-~~~
+A protocol-native mechanism could allow the client to receive address hints as
+part of an HTTP/3 or QUIC exchange. Such a mechanism might be integrated into
+the transport context, a response header, or an extension-specific metadata
+field. This approach may be more efficient in environments where the transport
+and applications are tightly coupled, but it requires a specific protocol
+design and a clear trust model.
 
-Note that this is also simply an illustrative example, the format, name, etc
-would obviously need to be changed after some discussion with a working group.
+This document does not attempt to define such a format in detail. It only notes
+that transport-specific mechanisms are likely to offer efficiency advantages,
+particularly when the client can apply the embedded data in a way that is
+consistent with the underlying connection establishment logic.
 
-This has the advantage of being architecturally cleaner, but does require that
-the webserver implementation embed the answers. This might be a good option, as
-in many cases the web-server will have good visibility into what the "best"
-answer is for a client. For example, it is likely that the same web-servers or
-CDN serves both www.example.com and images.example.com. This means that the
-webserver for www.example.com (potentially) has good visibility into the
-relative load, capabilities, cache, etc for images.example.com.
+# Address Selection and Operational Considerations
 
-This solution places the responsibility for resolving and embedding the answers
-at the webserver / infrastructure level. This obviously has some implications -
-for example, if the site owner has contracted with multiple CDNs, the CDN
-operator may have an incentive to preferentially return their own IP addresses
-to retain more traffic, or conversely return their competitors's addresses to
-drive costs to them.
+Before an answer can be embedded in a response, the entity generating the
+response must determine what address information to provide. In many cases, the
+correct answer depends on factors such as:
 
-## QUIC / HTTP/3 streams.
+- the client's local network conditions;
+- the target service's current load and endpoint set;
+- the transport and policy of the origin or CDN; and
+- the service's DNS configuration and load-balancing behavior.
 
-{ Someone who actually understands this stuff will need to write this section
-:-) }
+For example, a CDN serving multiple customers may have different optimal
+endpoints for the same hostname depending on the client network, the edge
+location, and the active service topology. A server that resolves a name in one
+geographic region may produce an answer that is excellent for Toronto clients but
+poor for clients in Sydney.
 
-# Resolving the address / implications.
+This creates several operational tensions:
 
-Obviously, before an answer can be embedded in a response, the entity
-generating the response will need to determine what that answer should be. The
-"correct" answer depends on many factors - as an example, a CDN serving
-resources for Customer A may serve multiple names for that customer, and
-"internal" links are quite common. It is also possible that the same CDN might
-be serving other customers that Customer A includes resource from, or links to.
+1. Resolution frequency: resolving names too often increases server-side load,
+   while resolving too infrequently leads to stale answers and reduced
+   effectiveness.
+2. Load shifts: if a client receives an address that is correct for a previous
+   mapping but not for the current service state, the answer may create an
+   unintended traffic spike.
+3. TTL semantics: the lifetime of the answer matters. A stale or overly broad
+   answer can be worse than no answer at all.
+4. Client heterogeneity: different clients may have distinct optimal
+   destinations for the same hostname, which complicates any attempt to
+   generate a single answer for all clients.
 
-If this is not the case, the webserver or CDN could proactively resolve names
-using the DNS, which it knows that clients will need. There are a few obvious
-tensions here:
-  1. how often should the CDN resolve these names? There is a tradeoff between
-     creating excess load resolving names which are not needed versus the
-     resolutions that the clients do not need to make because they have been
-     given the answer. Determining when and how often to resolve this is a
-     topic for discussion. although DNS based load-balancing is decreasing in
-     popularity, it is still in common use. If a CDN in e.g Toronto Canada
-     resolves www.example.net it may receive an IP address which is
-     network-topographically "close" to Toronto, which may be completely
-     unsuitable for a client in e.g Sydney Australia.
-  3. TTLs and load-sloshing: If a large CDN resolves a popular name like
-     www.example.com and hands that resolved IP to all of its clients, that IP
-     may experience significant load. If the next time that CDN resolves the
-     name it gets a different answer, and then starts using that, there might
-     be large, and unwelcome traffic shifts.
+The design implications are therefore not purely protocol-level. They depend on
+operator practices, client policies, and the operational realities of modern
+CDN and edge infrastructure.
 
-# Security Considerations
+# Security and Privacy Considerations
 
-Yes, we are sure that there are many security considerations here. This entire
-idea might be a really bad one. The authors think that this idea is worth
-exploring, but we are also fine to retitle this "Embedded Answers Considered
-Dangerous" and document why :-)
+This proposal creates a tension between optimization and trust. The same
+mechanism that reduces DNS lookup latency can also allow a party that controls a
+response to steer the client toward a chosen address without the client having
+independently validated that address.
 
+The security considerations include:
+
+- stale or incorrect answers;
+- traffic steering to a malicious or unintended endpoint;
+- downgrade or bypass of DNSSEC validation;
+- cross-origin trust assumptions;
+- abuse by compromised origins or intermediaries; and
+- privacy exposure from embedded data itself.
+
+A client must therefore be conservative about how it uses embedded answers. The
+safest model is to treat them as equivalent to DNS answers only when they are
+cryptographically authenticated or otherwise validated according to a defined
+trust policy. In the absence of such validation, the embedded value should be
+handled as a hint and used only under constrained conditions.
+
+Any design that permits embedded answers to alter a client's network connection
+must specify the security boundary of that decision. In particular, the draft
+must clearly explain whether the answer may be used for all requests, only for
+certain origins, only for read-only traffic, or only in conjunction with a
+separate DNS validation step.
 
 # IANA Considerations
 
 This document has no IANA actions.
-
 
 --- back
 
 # Acknowledgments
 {:numbered="false"}
 
-Remember to update this. Initial list: David Schinazi, Erik Nygren, everyone
-involved in "Resolverless DNS", Kraftwerk,
+The authors would like to acknowledge the input and feedback of colleagues who
+have discussed this topic with us, including participants in the broader DNS,
+HTTP, and web-platform communities.
