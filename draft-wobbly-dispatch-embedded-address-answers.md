@@ -36,6 +36,8 @@ author:
 
 
 normative:
+  RFC9102:
+  RFC4034:
 
 informative:
 
@@ -73,8 +75,8 @@ address information as part of an existing application-layer exchange, rather
 than by performing a separate DNS lookup. Such information could be embedded in
 HTML, carried in HTTP metadata, or delivered through a protocol mechanism such
 as HTTP/3 or QUIC. The goal is to allow the client to establish a connection
-more quickly, and, in certain situations, can also avoid exposing the lookup itself to the DNS
-infrastructure.
+more quickly, and, in certain situations, can also avoid exposing the lookup
+itself to the DNS infrastructure.
 
 This document is intentionally exploratory. It presents a number of possible
 ways to embed address information, along with several trust models that a
@@ -192,8 +194,10 @@ single mechanism.
 
 ## HTML embedding
 
-A straightforward design is to embed the address information directly in HTML.
-For example, the page at https://www.example.com/kittens could include
+{Ed note: This is primarily documented to illustrate the concept and is not
+necessarily intended for production use, other than perhaps as initial
+testing.} A straightforward design is to embed the address information directly
+in HTML. For example, the page at https://www.example.com/kittens could include
 attributes on elements that indicate the network target for a given resource:
 
 ~~~ html
@@ -375,3 +379,33 @@ over the years.
 Unfortunately, at least one of the authors has a terrible memory, and has lost
 track of all those who have contributed to this topic over the years, and will
 be more than happy to acknowledge their input if reminded of this :-)
+
+# Appendix A - DNSSEC Example
+{:numbered="false"}
+
+The following example illustrates how DNSSEC can be used to validate embedded
+answers. Note that this is simple for illustrative purposes, and the actual
+format will change after discussions on the general approach.
+
+This is presented in "human-readable layout", but would obviously be
+transmitted in "single-line wire format". In addition, the format is compressed
+to minimize the size of the transmitted data to avoid exceeding typical HTTP
+header size limits.
+
+~~~
+Embedded-Answer: www.example.com=192.0.2.1;
+  www.example.com. 3600 IN RRSIG ( A 13 5 3600 20201202000000 20181128000000 1870 example.com. rqY69NnTf4CN3GBGQjKEJCLAMsRkUrXe0JW8IqDb5rQHHzxNqqPeEoi+2vI6Sz2BhaswpGLVVuoijuVdzxYjmw== );
+  example.com. 3600 IN DNSKEY ( 257 3 13 JnA1XgyJTZz+psWvbrfUWLV6ULqIJyUS2CQdhUH9VK35bslWeJpRzrlxCUs7s/TsSfZMaGWVvlsuieh5nHcXzA== );
+  example.com. 3600 IN RRSIG ( DNSKEY 13 2 3600 20201202000000 20181128000000 1870 example.com. nYisnu/26Sw1qmGuREa9o/fLgYuA4oNPt4+6PMBZoN0MS8Gjtli9NVRYeSIztQHPGSpvRxTUC4tZi62z1UgGDw== );
+  example.com. 172800 IN DS ( 1870 13 2 e9b533a049798e900b5c29c90cd25a986e8a44f319ac3cd302bafc08f5b81e16);
+  com. 172800 IN DNSKEY ( 257 3 13 RbkcO+96XZmnp8jYIuM4lryAp3egQjSmBaSoiA7H76Tm0RLHPNPUxlVk+nQ0fIc3I8xfZDNw8Wa0Pe3/g2QA/w== );
+  com. 172800 IN RRSIG ( DNSKEY 13 1 172800 20201202000000 20181128000000 18931 com. LJ4p5ORS2ViILwTotSlWixElqRXHY5tOdIuHlPWTdBGPMq3y40QNr1V+ZOyA57LFdPKpcvb8BvhM+GqKWGBEsg== );
+  com. 86400 IN DS ( 18931 13 2 20f7a9db42d0e2042fbbb9f9ea015941202f9eabb94487e658c188e7bcb52115 );
+  com. 86400 IN RRSIG ( DS 13 1 86400 20201202000000 20181128000000 31918 . nDiDlBjXEE/6AudhC++Hui1ckPcuAnGbjEASNoxA3ZHjlXRzL050UzePko5PbvBKTf6pk8JRCqnfzlo2QY+WXA== );
+ . 86400 IN DNSKEY ( 256 3 13 zKz+DCWkNA/vuheiVPcGqsH40U84KZAlrMRIyozj9WHzf8PsFp/oR8j8vmjjWP98cbte4d8NvlGLxzbUzo3+FA== ) ; Key ID = 31918;
+ . 86400 IN DNSKEY ( 257 3 13 yvX+VNTUjxZiGvtr060hVbrPV9H6rVusQtF9lIxCFzbZOJxMQBFmbqlc8XclvQ+gDOXnFOTsgs/frMmxyGOtRg== );
+ . 86400 IN RRSIG ( DNSKEY 13 0 86400 20201202000000 20181128000000 47005 . 0EPW1ca+N ZhZPKla77STG734cTeIOjUwq7eW0HsnOfudWmnCEVeco2wLLq9mnBT1dtNjIczvLG9pQTnOKUsHQ==)
+~~~
+
+This example is stolen from [RFC9102], Section 4.1, and lightly edited for
+brevity.
