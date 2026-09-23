@@ -73,7 +73,7 @@ address information as part of an existing application-layer exchange, rather
 than by performing a separate DNS lookup. Such information could be embedded in
 HTML, carried in HTTP metadata, or delivered through a protocol mechanism such
 as HTTP/3 or QUIC. The goal is to allow the client to establish a connection
-more quickly, and in some cases to avoid exposing the lookup itself to the DNS
+more quickly, and, in certain situations, can also avoid exposing the lookup itself to the DNS
 infrastructure.
 
 This document is intentionally exploratory. It presents a number of possible
@@ -274,12 +274,9 @@ This creates several operational tensions:
 1. Resolution frequency: resolving names too often increases server-side load,
    while resolving too infrequently leads to stale answers and reduced
    effectiveness.
-2. Load shifts: if a client receives an address that is correct for a previous
-   mapping but not for the current service state, the answer may create an
-   unintended traffic spike.
-3. TTL semantics: the lifetime of the answer matters. A stale or overly broad
-   answer can be worse than no answer at all.
-4. Client heterogeneity: different clients may have distinct optimal
+2. TTL semantics: the lifetime of the answer matters. A stale or overly broad
+   answer might be counterproductive.
+3. Client heterogeneity: different clients may have distinct optimal
    destinations for the same hostname, which complicates any attempt to
    generate a single answer for all clients.
 
