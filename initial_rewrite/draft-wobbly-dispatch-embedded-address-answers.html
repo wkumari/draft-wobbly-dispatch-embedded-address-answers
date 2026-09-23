@@ -1243,7 +1243,10 @@ trade-offs associated with each.<a href="#section-abstract-2" class="pilcrow">¶
             <p id="section-toc.1-1.11.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.12.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-appendix-a-dnssec-example" class="internal xref">Appendix A - DNSSEC Example</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1265,8 +1268,8 @@ address information as part of an existing application-layer exchange, rather
 than by performing a separate DNS lookup. Such information could be embedded in
 HTML, carried in HTTP metadata, or delivered through a protocol mechanism such
 as HTTP/3 or QUIC. The goal is to allow the client to establish a connection
-more quickly, and, in certain situations, can also avoid exposing the lookup itself to the DNS
-infrastructure.<a href="#section-1-2" class="pilcrow">¶</a></p>
+more quickly, and, in certain situations, can also avoid exposing the lookup
+itself to the DNS infrastructure.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">This document is intentionally exploratory. It presents a number of possible
 ways to embed address information, along with several trust models that a
 client might apply when deciding whether to use such information. The design
@@ -1419,8 +1422,10 @@ single mechanism.<a href="#section-5-1" class="pilcrow">¶</a></p>
         <h3 id="name-html-embedding">
 <a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-html-embedding" class="section-name selfRef">HTML embedding</a>
         </h3>
-<p id="section-5.1-1">A straightforward design is to embed the address information directly in HTML.
-For example, the page at https://www.example.com/kittens could include
+<p id="section-5.1-1">{Ed note: This is primarily documented to illustrate the concept and is not
+necessarily intended for production use, other than perhaps as initial
+testing.} A straightforward design is to embed the address information directly
+in HTML. For example, the page at https://www.example.com/kittens could include
 attributes on elements that indicate the network target for a given resource:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <div class="lang-html sourcecode" id="section-5.1-2">
 <pre>
@@ -1664,9 +1669,17 @@ separate DNS validation step.<a href="#section-8-5" class="pilcrow">¶</a></p>
       <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC4034">[RFC4034]</dt>
+      <dd>
+<span class="refAuthor">Arends, R.</span>, <span class="refAuthor">Austein, R.</span>, <span class="refAuthor">Larson, M.</span>, <span class="refAuthor">Massey, D.</span>, and <span class="refAuthor">S. Rose</span>, <span class="refTitle">"Resource Records for the DNS Security Extensions"</span>, <span class="seriesInfo">RFC 4034</span>, <span class="seriesInfo">DOI 10.17487/RFC4034</span>, <time datetime="2005-03" class="refDate">March 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4034">https://www.rfc-editor.org/rfc/rfc4034</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
-    <dd>
+      <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9102">[RFC9102]</dt>
+    <dd>
+<span class="refAuthor">Dukhovni, V.</span>, <span class="refAuthor">Huque, S.</span>, <span class="refAuthor">Toorop, W.</span>, <span class="refAuthor">Wouters, P.</span>, and <span class="refAuthor">M. Shore</span>, <span class="refTitle">"TLS DNSSEC Chain Extension"</span>, <span class="seriesInfo">RFC 9102</span>, <span class="seriesInfo">DOI 10.17487/RFC9102</span>, <time datetime="2021-08" class="refDate">August 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9102">https://www.rfc-editor.org/rfc/rfc9102</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -1687,8 +1700,40 @@ track of all those who have contributed to this topic over the years, and will
 be more than happy to acknowledge their input if reminded of this :-)<a href="#appendix-A-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="authors-addresses">
+<div id="appendix-a-dnssec-example">
 <section id="appendix-B">
+      <h2 id="name-appendix-a-dnssec-example">
+<a href="#name-appendix-a-dnssec-example" class="section-name selfRef">Appendix A - DNSSEC Example</a>
+      </h2>
+<p id="appendix-B-1">The following example illustrates how DNSSEC can be used to validate embedded
+answers. Note that this is simple for illustrative purposes, and the actual
+format will change after discussions on the general approach.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<p id="appendix-B-2">This is presented in "human-readable layout", but would obviously be
+transmitted in "single-line wire format". In addition, the format is compressed
+to minimize the size of the transmitted data to avoid exceeding typical HTTP
+header size limits.<a href="#appendix-B-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B-3">
+<pre>
+Embedded-Answer: www.example.com=192.0.2.1;
+  www.example.com. 3600 IN RRSIG ( A 13 5 3600 20201202000000 20181128000000 1870 example.com. rqY69NnTf4CN3GBGQjKEJCLAMsRkUrXe0JW8IqDb5rQHHzxNqqPeEoi+2vI6Sz2BhaswpGLVVuoijuVdzxYjmw== );
+  example.com. 3600 IN DNSKEY ( 257 3 13 JnA1XgyJTZz+psWvbrfUWLV6ULqIJyUS2CQdhUH9VK35bslWeJpRzrlxCUs7s/TsSfZMaGWVvlsuieh5nHcXzA== );
+  example.com. 3600 IN RRSIG ( DNSKEY 13 2 3600 20201202000000 20181128000000 1870 example.com. nYisnu/26Sw1qmGuREa9o/fLgYuA4oNPt4+6PMBZoN0MS8Gjtli9NVRYeSIztQHPGSpvRxTUC4tZi62z1UgGDw== );
+  example.com. 172800 IN DS ( 1870 13 2 e9b533a049798e900b5c29c90cd25a986e8a44f319ac3cd302bafc08f5b81e16);
+  com. 172800 IN DNSKEY ( 257 3 13 RbkcO+96XZmnp8jYIuM4lryAp3egQjSmBaSoiA7H76Tm0RLHPNPUxlVk+nQ0fIc3I8xfZDNw8Wa0Pe3/g2QA/w== );
+  com. 172800 IN RRSIG ( DNSKEY 13 1 172800 20201202000000 20181128000000 18931 com. LJ4p5ORS2ViILwTotSlWixElqRXHY5tOdIuHlPWTdBGPMq3y40QNr1V+ZOyA57LFdPKpcvb8BvhM+GqKWGBEsg== );
+  com. 86400 IN DS ( 18931 13 2 20f7a9db42d0e2042fbbb9f9ea015941202f9eabb94487e658c188e7bcb52115 );
+  com. 86400 IN RRSIG ( DS 13 1 86400 20201202000000 20181128000000 31918 . nDiDlBjXEE/6AudhC++Hui1ckPcuAnGbjEASNoxA3ZHjlXRzL050UzePko5PbvBKTf6pk8JRCqnfzlo2QY+WXA== );
+ . 86400 IN DNSKEY ( 256 3 13 zKz+DCWkNA/vuheiVPcGqsH40U84KZAlrMRIyozj9WHzf8PsFp/oR8j8vmjjWP98cbte4d8NvlGLxzbUzo3+FA== ) ; Key ID = 31918;
+ . 86400 IN DNSKEY ( 257 3 13 yvX+VNTUjxZiGvtr060hVbrPV9H6rVusQtF9lIxCFzbZOJxMQBFmbqlc8XclvQ+gDOXnFOTsgs/frMmxyGOtRg== );
+ . 86400 IN RRSIG ( DNSKEY 13 0 86400 20201202000000 20181128000000 47005 . 0EPW1ca+N ZhZPKla77STG734cTeIOjUwq7eW0HsnOfudWmnCEVeco2wLLq9mnBT1dtNjIczvLG9pQTnOKUsHQ==)
+</pre><a href="#appendix-B-3" class="pilcrow">¶</a>
+</div>
+<p id="appendix-B-4">This example is stolen from <span>[<a href="#RFC9102" class="cite xref">RFC9102</a>]</span>, Section 4.1, and lightly edited for
+brevity.<a href="#appendix-B-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-C">
       <h2 id="name-authors-addresses">
 <a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>
