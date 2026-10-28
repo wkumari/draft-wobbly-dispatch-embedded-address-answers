@@ -5,8 +5,8 @@
 WG Working Group                                               W. Kumari
 Internet-Draft                                              Google, Inc.
 Intended status: Informational                                  J. Abley
-Expires: 27 March 2027                                        Cloudflare
-                                                       23 September 2026
+Expires: 1 May 2027                                           Cloudflare
+                                                         28 October 2026
 
 
                           DNS Embedded Answers
@@ -60,7 +60,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 27 March 2027.
+   This Internet-Draft will expire on 1 May 2027.
 
 Copyright Notice
 
