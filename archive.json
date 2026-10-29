@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-27T00:09:59.502767+00:00",
+  "timestamp": "2026-10-29T00:08:19.886985+00:00",
   "repo": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
   "labels": [
     {
@@ -50,5 +50,60 @@
     }
   ],
   "issues": [],
-  "pulls": []
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOS2V9LM8AAAABLXFP7w",
+      "title": "Initial rewrite. ",
+      "url": "https://github.com/wkumari/draft-wobbly-dispatch-embedded-address-answers/pull/1",
+      "state": "MERGED",
+      "author": "wkumari",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Creating PR for tracking - discussed with co-author. \n\nInitial rewrite is, as implied, a rewrite. I used Gemini to help rewrite this to make it clearer and improve grammar and clarity.",
+      "createdAt": "2026-10-28T20:40:18Z",
+      "updatedAt": "2026-10-28T20:41:29Z",
+      "baseRepository": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
+      "baseRefName": "main",
+      "baseRefOid": "caa0815c11662f80b27d098912846c1af9c84752",
+      "headRepository": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
+      "headRefName": "initial_rewrite",
+      "headRefOid": "5017daa086b326eb20095a3424671d159cd598fe",
+      "closedAt": "2026-10-28T20:41:29Z",
+      "mergedAt": "2026-10-28T20:41:29Z",
+      "mergedBy": "wkumari",
+      "mergeCommit": {
+        "oid": "5ba74a934484d9c719cc8cba44be74e0e9d727f0"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDOS2V9LM8AAAABLX-MyQ",
+      "title": "Before initial submit",
+      "url": "https://github.com/wkumari/draft-wobbly-dispatch-embedded-address-answers/pull/2",
+      "state": "OPEN",
+      "author": "wkumari",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Hey Joe,\n\nPlease review and confirm that this is ready to submit.\n",
+      "createdAt": "2026-10-28T21:54:31Z",
+      "updatedAt": "2026-10-28T21:54:31Z",
+      "baseRepository": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
+      "baseRefName": "main",
+      "baseRefOid": "5ba74a934484d9c719cc8cba44be74e0e9d727f0",
+      "headRepository": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
+      "headRefName": "pre-submit",
+      "headRefOid": "73607200500721e47b89d1ed77c45836c5ce8033",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    }
+  ]
 }
