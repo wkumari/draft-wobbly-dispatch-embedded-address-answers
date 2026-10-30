@@ -39,9 +39,11 @@ jobs:
           .venv
           .gems
           node_modules
-          .targets.mk
         key: i-d-${{ steps.setup.outputs.date }}
         restore-keys: i-d-
+
+    - name: "Reset Generated Make Targets"
+      run: rm -f .targets.mk
 
     - name: "Build Drafts"
       id: build
