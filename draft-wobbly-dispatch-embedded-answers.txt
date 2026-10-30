@@ -10,7 +10,7 @@ Expires: 3 May 2027                                           Cloudflare
 
 
                           DNS Embedded Answers
-         draft-wobbly-dispatch-embedded-address-answers-latest
+             draft-wobbly-dispatch-embedded-answers-latest
 
 Abstract
 
@@ -38,7 +38,7 @@ About This Document
    answers/draft-wobbly-dispatch-embedded-address-answers.html.  Status
    information for this document may be found at
    https://datatracker.ietf.org/doc/draft-wobbly-dispatch-embedded-
-   address-answers/.
+   answers/.
 
    Source for this draft and an issue tracker can be found at
    https://github.com/wkumari/draft-wobbly-dispatch-embedded-address-
