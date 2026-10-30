@@ -4,7 +4,7 @@ title: "DNS Embedded Answers"
 abbrev: "DAE"
 category: info
 
-docname: draft-wobbly-dispatch-embedded-address-answers-latest
+docname: draft-wobbly-dispatch-embedded-answers-latest
 submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
