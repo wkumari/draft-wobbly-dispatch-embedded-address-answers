@@ -4,10 +4,10 @@
 
 This is the working area for the individual Internet-Draft, "DNS Embedded Answers".
 
-* [Editor's Copy](https://wkumari.github.io/draft-wobbly-dispatch-embedded-address-answers/#go.draft-wobbly-dispatch-embedded-address-answers.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-wobbly-dispatch-embedded-address-answers)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-wobbly-dispatch-embedded-address-answers)
-* [Compare Editor's Copy to Individual Draft](https://wkumari.github.io/draft-wobbly-dispatch-embedded-address-answers/#go.draft-wobbly-dispatch-embedded-address-answers.diff)
+* [Editor's Copy](https://wkumari.github.io/draft-wobbly-dispatch-embedded-address-answers/#go.draft-wobbly-dispatch-embedded-answers.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-wobbly-dispatch-embedded-answers)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-wobbly-dispatch-embedded-answers)
+* [Compare Editor's Copy to Individual Draft](https://wkumari.github.io/draft-wobbly-dispatch-embedded-address-answers/#go.draft-wobbly-dispatch-embedded-answers.diff)
 
 
 ## Contributing
