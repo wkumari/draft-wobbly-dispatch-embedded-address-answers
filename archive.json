@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-29T00:08:19.886985+00:00",
+  "timestamp": "2026-11-01T00:08:21.246843+00:00",
   "repo": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
   "labels": [
     {
@@ -84,24 +84,110 @@
       "id": "PR_kwDOS2V9LM8AAAABLX-MyQ",
       "title": "Before initial submit",
       "url": "https://github.com/wkumari/draft-wobbly-dispatch-embedded-address-answers/pull/2",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "wkumari",
       "authorAssociation": "OWNER",
       "assignees": [],
       "labels": [],
       "body": "Hey Joe,\n\nPlease review and confirm that this is ready to submit.\n",
       "createdAt": "2026-10-28T21:54:31Z",
-      "updatedAt": "2026-10-28T21:54:31Z",
+      "updatedAt": "2026-10-30T22:40:48Z",
       "baseRepository": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
       "baseRefName": "main",
       "baseRefOid": "5ba74a934484d9c719cc8cba44be74e0e9d727f0",
       "headRepository": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
       "headRefName": "pre-submit",
       "headRefOid": "73607200500721e47b89d1ed77c45836c5ce8033",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-10-30T22:40:45Z",
+      "mergedAt": "2026-10-30T22:40:45Z",
+      "mergedBy": "wkumari",
+      "mergeCommit": {
+        "oid": "69ed15480830fdafea2f0fb08e6eb4ae83b28a21"
+      },
+      "comments": [
+        {
+          "author": "wkumari",
+          "authorAssociation": "OWNER",
+          "body": "Merging after discussions with co-author.",
+          "createdAt": "2026-10-30T22:40:48Z",
+          "updatedAt": "2026-10-30T22:40:48Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 3,
+      "id": "PR_kwDOS2V9LM8AAAABL4G1VA",
+      "title": "Fix publish workflow failure caused by stale cached release targets",
+      "url": "https://github.com/wkumari/draft-wobbly-dispatch-embedded-address-answers/pull/3",
+      "state": "MERGED",
+      "author": "copilot-swe-agent",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [
+        "wkumari",
+        "Copilot"
+      ],
+      "labels": [],
+      "body": "The `Publish New Draft Version` GitHub Action was failing in run `41139832731` because `make releases` consumed a stale cached `.targets.mk` and required a non-existent versioned XML target. This change ensures release target metadata is regenerated per run instead of restored from cache.\n\n- **Root cause addressed**\n  - Removed `.targets.mk` from the cache paths in `publish.yml` so generated release dependencies are not persisted across runs.\n\n- **Deterministic target regeneration**\n  - Added an explicit pre-build cleanup step to delete `.targets.mk` before invoking `martinthomson/i-d-template` with `make: releases`.\n\n- **Workflow scope**\n  - Change is isolated to `.github/workflows/publish.yml`; no draft content or build logic outside the publish pipeline was modified.\n\n```yaml\n- name: \"Caching\"\n  uses: actions/cache@v5\n  with:\n    path: |\n      .refcache\n      .venv\n      .gems\n      node_modules\n\n- name: \"Reset Generated Make Targets\"\n  run: rm -f .targets.mk\n```",
+      "createdAt": "2026-10-30T22:44:21Z",
+      "updatedAt": "2026-10-30T22:51:48Z",
+      "baseRepository": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
+      "baseRefName": "main",
+      "baseRefOid": "69ed15480830fdafea2f0fb08e6eb4ae83b28a21",
+      "headRepository": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
+      "headRefName": "copilot/fix-publish-new-draft-version",
+      "headRefOid": "728ee60ffdfaac3c8d3de4bda7a308ecce4d72b2",
+      "closedAt": "2026-10-30T22:51:48Z",
+      "mergedAt": "2026-10-30T22:51:48Z",
+      "mergedBy": "wkumari",
+      "mergeCommit": {
+        "oid": "7413580295386aebe3478d3c6b07f1c1ef0d895a"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOS2V9LM8AAAABVOjbVw",
+          "commit": {
+            "abbreviatedOid": "728ee60"
+          },
+          "author": "wkumari",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-30T22:50:26Z",
+          "updatedAt": "2026-10-30T22:50:26Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "PR_kwDOS2V9LM8AAAABL4MGvQ",
+      "title": "Guard publish tag-annotation fetch to tag refs only",
+      "url": "https://github.com/wkumari/draft-wobbly-dispatch-embedded-address-answers/pull/4",
+      "state": "MERGED",
+      "author": "copilot-swe-agent",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [
+        "wkumari",
+        "Copilot"
+      ],
+      "labels": [],
+      "body": "The **Publish New Draft Version** workflow was failing on manual dispatch from `main` because it attempted to fetch into the currently checked-out local branch. This change scopes the tag-annotation fetch to tag-triggered runs, preventing the branch-ref conflict while preserving tag publish behavior.\n\n- **Root cause addressed**\n  - `Get Tag Annotations` ran unconditionally and executed:\n    - `git fetch -f origin ${{ github.ref }}:${{ github.ref }}`\n  - On `workflow_dispatch` from `main`, this resolves to `refs/heads/main:refs/heads/main`, which Git rejects when `main` is checked out.\n\n- **Workflow change**\n  - Added a tag guard to the fetch step in `.github/workflows/publish.yml`:\n    - `if: github.ref_type == 'tag'`\n  - Keeps annotation fetch for tag publishes; skips it for branch/manual dispatch runs.\n\n- **Minimal diff**\n```yaml\n- name: \"Get Tag Annotations\"\n  if: github.ref_type == 'tag'\n  run: git fetch -f origin ${{ github.ref }}:${{ github.ref }}\n```",
+      "createdAt": "2026-10-30T22:53:58Z",
+      "updatedAt": "2026-10-30T22:57:25Z",
+      "baseRepository": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
+      "baseRefName": "main",
+      "baseRefOid": "7413580295386aebe3478d3c6b07f1c1ef0d895a",
+      "headRepository": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
+      "headRefName": "copilot/fix-publish-new-draft-version-again",
+      "headRefOid": "80df49a2aaf7f75f562849b92c4a07b796cbb83d",
+      "closedAt": "2026-10-30T22:57:24Z",
+      "mergedAt": "2026-10-30T22:57:24Z",
+      "mergedBy": "wkumari",
+      "mergeCommit": {
+        "oid": "7d7a9590b4174976cb4d49760b10f4db104bb321"
+      },
       "comments": [],
       "reviews": []
     }
