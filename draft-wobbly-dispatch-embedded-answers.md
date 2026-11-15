@@ -42,6 +42,7 @@ normative:
   RFC9460:
 
 informative:
+  RFC9110:
   I-D.ietf-happy-happyeyeballs-v3:
 
 ...
@@ -266,6 +267,15 @@ hints that are relevant to the response being served:
 ~~~
 Embedded-Answers: images.example.com="AAEAAwJoMgAEAATAAAIB"
 ~~~
+
+The Embedded-Answers field could also be carried in the HTTP trailer section
+(Section 6.5 of {{RFC9110}}) for hints unlikely to be needed until the page is
+fully loaded and rendered, such as hints for links followed on user
+interaction. Deferring generation and transmission of these hints until after
+the response content could reduce page rendering time. Hints needed for
+initial rendering would remain in the response headers. Since trailers can be
+discarded in transit, clients would fall back to normal name resolution when
+the hints are unavailable.
 
 This mechanism is architecturally cleaner than embedding data directly in HTML.
 The server is already in control of the response, and in many deployments it
