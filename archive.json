@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-11-15T00:07:54.979222+00:00",
+  "timestamp": "2026-11-17T00:07:00.473151+00:00",
   "repo": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
   "labels": [
     {
@@ -188,6 +188,58 @@
       "mergeCommit": {
         "oid": "7d7a9590b4174976cb4d49760b10f4db104bb321"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDOS2V9LM8AAAABPWk2Aw",
+      "title": "SVCB is better!",
+      "url": "https://github.com/wkumari/draft-wobbly-dispatch-embedded-address-answers/pull/5",
+      "state": "OPEN",
+      "author": "yaroslavros",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "This also allows to convey ALPN and ECHConfigList.\n\nThat is, client won't need to wait for HTTPS DNS lookup to complete.",
+      "createdAt": "2026-11-15T17:30:03Z",
+      "updatedAt": "2026-11-15T17:30:03Z",
+      "baseRepository": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
+      "baseRefName": "main",
+      "baseRefOid": "f509b95fabc6a7eb875adc66ad804b9810186c14",
+      "headRepository": "yaroslavros/draft-wobbly-dispatch-embedded-address-answers",
+      "headRefName": "svcb",
+      "headRefOid": "18b66935ca7e8683e1e9c9aac4ffdd4b945dfbf4",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDOS2V9LM8AAAABPWm8Ow",
+      "title": "Trailers applicability",
+      "url": "https://github.com/wkumari/draft-wobbly-dispatch-embedded-address-answers/pull/6",
+      "state": "OPEN",
+      "author": "yaroslavros",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Maybe it is worth experimenting with trailer headers for hints that do not need to be available until later.",
+      "createdAt": "2026-11-15T17:34:02Z",
+      "updatedAt": "2026-11-15T17:34:03Z",
+      "baseRepository": "wkumari/draft-wobbly-dispatch-embedded-address-answers",
+      "baseRefName": "main",
+      "baseRefOid": "f509b95fabc6a7eb875adc66ad804b9810186c14",
+      "headRepository": "yaroslavros/draft-wobbly-dispatch-embedded-address-answers",
+      "headRefName": "trailers",
+      "headRefOid": "ee8d905e7a8e563275b773adefa4f560869450e7",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
